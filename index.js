@@ -26,7 +26,9 @@ app.get("/articles", (req, res, next) => {
 });
 
 app.post("/articles", (req, res, next) => {
-    res.send("OK");
+    const article = { tiele: req.body.title };
+    articles.push(article);
+    res.send(article);
 });
 
 app.get("/articles/:id", (req, res, next) => {
