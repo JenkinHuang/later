@@ -30,5 +30,5 @@ class Article {
     }
 }
 
-module.exports = DB;
+module.exports = db;
 module.exports.Article = Article;

@@ -16,6 +16,7 @@ const bodyParser = require("body-parser");
 const app = express();
 // const articles = [{ title: 'Example'}];
 const Article = require("./public/js/db").Article;
+const read = require("node-readability");
 
 app.set("port", process.env.PORT || 3000);
 
@@ -29,11 +30,11 @@ app.get("/articles", (req, res, next) => {
     });
 });
 
-app.post("/articles", (req, res, next) => {
-    const article = { tiele: req.body.title };
-    articles.push(article);
-    res.send(article);
-});
+// app.post("/articles", (req, res, next) => {
+//     const article = { tiele: req.body.title };
+//     articles.push(article);
+//     res.send(article);
+// });
 
 app.get("/articles/:id", (req, res, next) => {
     const id = req.params.id;
@@ -53,6 +54,22 @@ app.delete("/articles/:id", (req, res, next) => {
     // console.log("Deleting: " + id);
     // delete articles[id];
     // res.send({ message: "Deleted" });
+});
+
+app.post("/articles", (req, res, next) => {
+    const url = req.body.url;
+
+    read(url, (err, result) => {
+        if (err || !result) res.status(500).send('Error downloading article');
+
+        Article.create(
+            { title: result.title, content: result.content },
+            (err, article) => {
+                if (err) return next(err);
+                res.send("OK");
+            }
+        );
+    });
 });
 
 app.listen(app.get("port"), () => {
